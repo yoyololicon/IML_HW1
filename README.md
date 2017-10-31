@@ -6,6 +6,9 @@ ID3	algorithm
 * python2.7.12(using Pycharm 2017.2.3)
 * 除了standard modules之外沒有使用其他外部package
 
+## 如何使用
+* **run.sh**:執行K-fold cross validation (K=5)的ID3 algorithm
+
 ## 實做細節
 總共寫了六種版本來實做ID3演算法
 
@@ -28,4 +31,25 @@ ID3	algorithm
 和ID3_all_feature一樣會用掉所有分割點後才會捨棄feature。
 
 ### IDE_multib_rand_forest
-將IDE3加上random forest功能。tree和資料的建構方式同ID3_all_feature_rand_forest。
+將ID3_multib加上random forest功能。tree和資料的建構方式同ID3_all_feature_rand_forest。
+
+## 實驗
+將六種方式個跑五十次取平均。使用資料為bezdekIris.data。
+最後發現**ID3_baseline**和**ID3_all_feature_rand_forest**的表現最穩定，其他如ID3_multib雖然有時候accuracy可以到
+97%，但有時候也會掉到90以下，都不太穩定。
+
+baseline最佳結果：
+```
+0.953333333333
+1.0 1.0
+0.942857142857 0.928246753247
+0.946825396825 0.916883116883
+```
+
+ID3_all_feature_rand_forest最佳結果：
+```
+0.966666666667
+1.0 1.0
+0.983333333333 0.910805860806
+0.932147852148 0.981818181818
+```
