@@ -1,10 +1,9 @@
 from random import shuffle
+import random_forest
 from collections import Counter
 import ID3_baseline
-import random_forest
-import ID3_multib
 import copy
-    
+
 def Most_Common(lst):
     data = Counter(lst)
     return data.most_common(1)[0][0]
@@ -14,7 +13,7 @@ def evaluate(lb, data, frst):
     for item in data:
         predicts = []
         for t in frst:
-            predicts.append(ID3_multib.classify(t, item[:4]))
+            predicts.append(ID3_baseline.classify(t, item[:4]))
         my_predict = Most_Common(predicts)
         if item[4] == lb:
             if my_predict == lb:
@@ -36,11 +35,11 @@ def evaluate(lb, data, frst):
     else:
         r = float(TP)/(TP+FN)
     return p, r
-        
+
 if __name__ == '__main__':
     data = ID3_baseline.get_iris_data('bezdekIris.data')
     feature_div = ID3_baseline.make_boundary(data)
-    
+
     shuffle(data)
     K = 5
     stepsize = len(data)/K
@@ -48,9 +47,7 @@ if __name__ == '__main__':
     total_accuracy = []
     precision = [[], [], []]
     recall = [[], [], []]
-    
-    cut = 2
-    
+
     for i in range(K):
         test = kfold_data[i]
         train = []
@@ -58,14 +55,13 @@ if __name__ == '__main__':
         for j in range(K):
             if j != i:
                 train+=kfold_data[j]
-        
         for j in range(50):
-            forest.append(ID3_multib.ID3(random_forest.rand_feature(ID3_baseline.features, copy.deepcopy(feature_div), 3), random_forest.rand_data(train, int(len(train) * 0.35)), cut))
+            forest.append(ID3_baseline.ID3(random_forest.rand_feature(ID3_baseline.features, copy.deepcopy(feature_div), 3), random_forest.rand_data(train, int(len(train)*0.35))))
         tp = 0
         for j in test:
             predicts = []
             for t in forest:
-                predicts.append(ID3_multib.classify(t, j[:4])) #<< next time start here!
+                predicts.append(ID3_baseline.classify(t, j[:4])) #<< next time start here!
             if j[4] == Most_Common(predicts):
                 tp+=1
         total_accuracy.append(float(tp)/len(test))
@@ -92,8 +88,6 @@ def compute_average_score():
     precision = [[], [], []]
     recall = [[], [], []]
 
-    cut = 2
-
     for i in range(K):
         test = kfold_data[i]
         train = []
@@ -101,16 +95,15 @@ def compute_average_score():
         for j in range(K):
             if j != i:
                 train += kfold_data[j]
-
         for j in range(50):
             forest.append(
-                ID3_multib.ID3(random_forest.rand_feature(ID3_baseline.features, copy.deepcopy(feature_div), 3),
-                               random_forest.rand_data(train, int(len(train) * 0.35)), cut))
+                ID3_baseline.ID3(random_forest.rand_feature(ID3_baseline.features, copy.deepcopy(feature_div), 3),
+                                   random_forest.rand_data(train, int(len(train) * 0.35))))
         tp = 0
         for j in test:
             predicts = []
             for t in forest:
-                predicts.append(ID3_multib.classify(t, j[:4]))  # << next time start here!
+                predicts.append(ID3_baseline.classify(t, j[:4]))  # << next time start here!
             if j[4] == Most_Common(predicts):
                 tp += 1
         total_accuracy.append(float(tp) / len(test))
