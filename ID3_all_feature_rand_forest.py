@@ -56,7 +56,7 @@ if __name__ == '__main__':
         for j in range(K):
             if j != i:
                 train+=kfold_data[j]
-        for j in range(5):
+        for j in range(10):
             forest.append(ID3_all_feature.ID3(random_forest.rand_feature(ID3_baseline.features, copy.deepcopy(feature_div), 4), random_forest.rand_data(train, int(len(train) * 0.75))))
         tp = 0
         for j in test:
