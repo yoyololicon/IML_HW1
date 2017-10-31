@@ -1,7 +1,7 @@
-import math
 from itertools import combinations
 from random import shuffle
 import ID3_baseline
+import copy
 
 class Node:
   def __init__(self, leaf=None):
@@ -35,12 +35,11 @@ def remainder(d, D, k):
             rem = 0
             for i in range(k+1):
                 rem+=float(len(dd[i]))/M*e[i]
-            #print rem, boundary
+
             if rem < rem_min:
                 rem_min = rem
                 ft[0] = idx
                 ft[1] = b
-                #print rem, b
     
     return ft, rem_min
             
@@ -61,9 +60,9 @@ def ID3(d, D, k):
         
         new_n = Node()
         new_n.feature = parti
-        for i in range(len(d)):
-            if d[i][0] == ID3_baseline.features[parti[0]]:
-                d.pop(i)
+        for i in d:
+            if i[0] == ID3_baseline.features[parti[0]]:
+                d.remove(i)
                 break
         #case 3
         for sub_D in dd:
@@ -86,7 +85,7 @@ def classify(tree, x):
             if tree.feature[1][i] <= x[tree.feature[0]] < tree.feature[1][i+1]:
                 return classify(tree.children[i+1], x)
     
-def eval(lb, data, rt):
+def evaluate(lb, data, rt):
     TP = FP = FN = TN = 0
     for item in data:
         if item[4] == lb:
@@ -99,7 +98,7 @@ def eval(lb, data, rt):
                 FP+=1
             else:
                 TN+=1
-    #print TP, FP, FN, TN
+
     if TP+FP == 0:
         p = 0
     else:
@@ -130,8 +129,7 @@ if __name__ == '__main__':
         for j in range(K):
             if j != i:
                 train+=kfold_data[j]
-        feature_div_dub = feature_div[:]
-        root = ID3(feature_div_dub, train, cut)
+        root = ID3(copy.deepcopy(feature_div), train, cut)
         tp = 0
         for j in test:
             if j[4] == classify(root, j[:4]):
@@ -139,7 +137,7 @@ if __name__ == '__main__':
         total_accuracy.append(float(tp)/len(test))
         
         for k in range(3):
-            p, r = eval(ID3_baseline.labels[k], test, root)
+            p, r = evaluate(ID3_baseline.labels[k], test, root)
             precision[k].append(p)
             recall[k].append(r)
     

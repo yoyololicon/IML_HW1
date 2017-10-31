@@ -9,7 +9,6 @@ def rand_feature(labels, ft, k):
     for i in ft:
         if i[0] in sft:
             rsft.append(i)
-    #print len(rsft)
     return rsft
     
 def rand_data(D, k):
@@ -18,5 +17,4 @@ def rand_data(D, k):
         sD.append(random.choice(D))
     sD_set = set(map(tuple,sD))
     sD = map(list,sD_set)
-    #print len(sD)
     return sD

@@ -1,5 +1,6 @@
 import math
 from random import shuffle
+import copy
 
 labels = ['Iris-setosa', 'Iris-versicolor', 'Iris-virginica']
 features = ['sl', 'sw', 'pl', 'pw']
@@ -107,15 +108,13 @@ def make_boundary(data):
         div = []
         data_s = sorted(data,key=lambda d:d[i])
         for j in range(len(data)-1):
-            #print data_s[j][i]
             if data_s[j][4] != data_s[j+1][4]:
-               #print data_s[j][4], data_s[j+1][4]
                div.append((data_s[j][i]+data_s[j+1][i])/2)
         div = sorted(list(set(div)))
         ft.append([features[i], div])
     return ft
     
-def eval(lb, data, rt):
+def evaluate(lb, data, rt):
     TP = FP = FN = TN = 0
     for item in data:
         #print lb, item[4], classify(rt, item[:4])
@@ -143,7 +142,7 @@ def eval(lb, data, rt):
 if __name__ == '__main__':
     data = get_iris_data('bezdekIris.data')
     feature_div = make_boundary(data)
-    
+
     shuffle(data)
     K = 5
     stepsize = len(data)/K
@@ -158,8 +157,8 @@ if __name__ == '__main__':
         for j in range(K):
             if j != i:
                 train+=kfold_data[j]
-        feature_div_dub = feature_div[:]
-        root = ID3(feature_div_dub, train)
+
+        root = ID3(copy.deepcopy(feature_div), train)
         tp = 0
         for j in test:
             if j[4] == classify(root, j[:4]):
@@ -167,7 +166,7 @@ if __name__ == '__main__':
         total_accuracy.append(float(tp)/len(test))
 
         for k in range(3):
-            p, r = eval(labels[k], test, root)
+            p, r = evaluate(labels[k], test, root)
             precision[k].append(p)
             recall[k].append(r)
 
