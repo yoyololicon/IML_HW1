@@ -3,5 +3,5 @@
 
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
-python2 ID3_allFeature_rand_forest.py
+python2 ID3_all_feature_rand_forest.py
 exit 0
