@@ -39,7 +39,7 @@ def remainder(d, D, k):
             if rem < rem_min:
                 rem_min = rem
                 ft[0] = idx
-                ft[1] = b
+                ft[1] = list(b)
     
     return ft, rem_min
             
@@ -49,7 +49,7 @@ def ID3(d, D, k):
         return Node(leaf=D[0][4])
     #case 2
     elif len(d) == 0:
-        return Node(leaf=ID3_baseline.get_major_feature(D))
+        return Node(leaf=ID3_baseline.get_major_label(D))
     else:
         parti, rem = remainder(d, D, k)
         dd = []
@@ -69,7 +69,7 @@ def ID3(d, D, k):
             if len(sub_D):
                 new_n.children.append(ID3(d, sub_D, k))
             else:
-                new_n.children.append(Node(leaf=ID3_baseline.get_major_feature(D)))
+                new_n.children.append(Node(leaf=ID3_baseline.get_major_label(D)))
 
         return new_n
         

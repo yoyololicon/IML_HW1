@@ -15,6 +15,6 @@ def rand_data(D, k):
     sD = []
     for i in range(k):
         sD.append(random.choice(D))
-    sD_set = set(map(tuple,sD))
-    sD = map(list,sD_set)
+    #sD_set = set(map(tuple,sD))
+    #sD = map(list,sD_set)
     return sD

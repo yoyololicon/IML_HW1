@@ -2,7 +2,7 @@ from random import shuffle
 import random_forest
 from collections import Counter
 import ID3_baseline
-import ID3_allFeature
+import ID3_all_feature
 import copy
 
 def Most_Common(lst):
@@ -56,8 +56,8 @@ if __name__ == '__main__':
         for j in range(K):
             if j != i:
                 train+=kfold_data[j]
-        for j in range(50):
-            forest.append(ID3_allFeature.ID3(random_forest.rand_feature(ID3_baseline.features, copy.deepcopy(feature_div), 3), random_forest.rand_data(train, int(len(train)*0.35))))
+        for j in range(5):
+            forest.append(ID3_all_feature.ID3(random_forest.rand_feature(ID3_baseline.features, copy.deepcopy(feature_div), 4), random_forest.rand_data(train, int(len(train) * 0.75))))
         tp = 0
         for j in test:
             predicts = []
@@ -96,10 +96,10 @@ def compute_average_score():
         for j in range(K):
             if j != i:
                 train += kfold_data[j]
-        for j in range(50):
+        for j in range(10):
             forest.append(
-                ID3_allFeature.ID3(random_forest.rand_feature(ID3_baseline.features, copy.deepcopy(feature_div), 3),
-                                   random_forest.rand_data(train, int(len(train) * 0.35))))
+                ID3_all_feature.ID3(random_forest.rand_feature(ID3_baseline.features, copy.deepcopy(feature_div), 4),
+                                    random_forest.rand_data(train, int(len(train) * 0.75))))
         tp = 0
         for j in test:
             predicts = []

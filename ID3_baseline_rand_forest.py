@@ -55,7 +55,7 @@ if __name__ == '__main__':
         for j in range(K):
             if j != i:
                 train+=kfold_data[j]
-        for j in range(50):
+        for j in range(5):
             forest.append(ID3_baseline.ID3(random_forest.rand_feature(ID3_baseline.features, copy.deepcopy(feature_div), 3), random_forest.rand_data(train, int(len(train)*0.35))))
         tp = 0
         for j in test:
@@ -95,10 +95,10 @@ def compute_average_score():
         for j in range(K):
             if j != i:
                 train += kfold_data[j]
-        for j in range(50):
+        for j in range(5):
             forest.append(
                 ID3_baseline.ID3(random_forest.rand_feature(ID3_baseline.features, copy.deepcopy(feature_div), 3),
-                                   random_forest.rand_data(train, int(len(train) * 0.35))))
+                                   random_forest.rand_data(train, int(len(train) * 0.75))))
         tp = 0
         for j in test:
             predicts = []

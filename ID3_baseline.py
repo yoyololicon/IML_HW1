@@ -23,13 +23,13 @@ def get_iris_data(file):
             data.append(t)
     return data
 
-def get_major_feature(data):
+def get_major_label(data):
     counter = []
     data_l = [x[4] for x in data]
     for l in labels:
         counter.append(data_l.count(l))
     return labels[counter.index(max(counter))]
-    
+
 def entropy(data):
     if not len(data):
         return 0
@@ -41,12 +41,12 @@ def entropy(data):
         if p:
             e+=p*math.log(p, 2)
     return -e
-    
+
 def remainder(d, D):
     M = len(D)
     rem_min = float('inf')
     ft = [0, 0]
-    
+
     for f in d:
         idx = features.index(f[0])
         for boundary in f[1]:
@@ -60,37 +60,37 @@ def remainder(d, D):
                 rem_min = rem
                 ft[0] = idx
                 ft[1] = boundary
-    
+
     return ft, rem_min
-            
+
 def ID3(d, D):
     #case 1
     if all(D[0][4] == x[4] for x in D):
         return bin_Node(leaf=D[0][4])
     #case 2
     elif len(d) == 0:
-        return bin_Node(leaf=get_major_feature(D))
+        return bin_Node(leaf=get_major_label(D))
     else:
         parti, rem = remainder(d, D)
         D1 = [x for x in D if x[parti[0]] < parti[1]]
         D2 = [x for x in D if x not in D1]
-        
+
         new_n = bin_Node()
         new_n.feature = parti
         for i in d:
             if i[0] == features[parti[0]]:
                 d.remove(i)
                 break
-        
+
         #case 3
         if len(D1):
             new_n.children[0] = ID3(d, D1)
         else:
-            new_n.children[0] = bin_Node(leaf=get_major_feature(D))
+            new_n.children[0] = bin_Node(leaf=get_major_label(D))
         if len(D2):
             new_n.children[1] = ID3(d, D2)
         else:
-            new_n.children[1] = bin_Node(leaf=get_major_feature(D))
+            new_n.children[1] = bin_Node(leaf=get_major_label(D))
 
         return new_n
         

@@ -1,37 +1,38 @@
 from random import shuffle
-import copy
 import ID3_baseline
+import ID3_multib
+import copy
             
-def ID3(d, D):
+def ID3(d, D, k):
     #case 1
     if all(D[0][4] == x[4] for x in D):
-        return ID3_baseline.bin_Node(leaf=D[0][4])
+        return ID3_multib.Node(leaf=D[0][4])
     #case 2
     elif len(d) == 0:
-        return ID3_baseline.bin_Node(leaf=ID3_baseline.get_major_feature(D))
+        return ID3_multib.Node(leaf=ID3_baseline.get_major_label(D))
     else:
-        parti, rem = ID3_baseline.remainder(d, D)
-        D1 = [x for x in D if x[parti[0]] < parti[1]]
-        D2 = [x for x in D if x not in D1]
+        parti, rem = ID3_multib.remainder(d, D, k)
+        dd = []
+        dd.append([x for x in D if x[parti[0]] < parti[1][0]])
+        for i in range(k-1):
+            dd.append([x for x in D if parti[1][i] <= x[parti[0]] < parti[1][i+1]])
+        dd.append([x for x in D if parti[1][k-1] <= x[parti[0]]])
         
-        new_n = ID3_baseline.bin_Node()
+        new_n = ID3_multib.Node()
         new_n.feature = parti
         for i in range(len(d)):
             if d[i][0] == ID3_baseline.features[parti[0]]:
-                d[i][1].remove(parti[1])
+                for border in parti[1]:
+                    d[i][1].remove(border)
                 if len(d[i][1]) == 0:
                     del d[i]
                 break
-        
         #case 3
-        if len(D1):
-            new_n.children[0] = ID3(d, D1)
-        else:
-            new_n.children[0] = ID3_baseline.bin_Node(leaf=ID3_baseline.get_major_feature(D))
-        if len(D2):
-            new_n.children[1] = ID3(d, D2)
-        else:
-            new_n.children[1] = ID3_baseline.bin_Node(leaf=ID3_baseline.get_major_feature(D))
+        for sub_D in dd:
+            if len(sub_D):
+                new_n.children.append(ID3(d, sub_D, k))
+            else:
+                new_n.children.append(ID3_multib.Node(leaf=ID3_baseline.get_major_label(D)))
 
         return new_n
         
@@ -46,26 +47,27 @@ if __name__ == '__main__':
     total_accuracy = []
     precision = [[], [], []]
     recall = [[], [], []]
-
+    
+    cut = 1
+    
     for i in range(K):
         test = kfold_data[i]
         train = []
         for j in range(K):
             if j != i:
                 train+=kfold_data[j]
-
-        root = ID3(copy.deepcopy(feature_div), train)
+        root = ID3(copy.deepcopy(feature_div), train, cut)
         tp = 0
         for j in test:
-            if j[4] == ID3_baseline.classify(root, j[:4]):
+            if j[4] == ID3_multib.classify(root, j[:4]):
                 tp+=1
         total_accuracy.append(float(tp)/len(test))
-
+        
         for k in range(3):
-            p, r = ID3_baseline.evaluate(ID3_baseline.labels[k], test, root)
+            p, r = ID3_multib.evaluate(ID3_baseline.labels[k], test, root)
             precision[k].append(p)
             recall[k].append(r)
-
+    
     print sum(total_accuracy)/K
     print sum(precision[0])/K, sum(recall[0])/K
     print sum(precision[1])/K, sum(recall[1])/K
@@ -83,22 +85,23 @@ def compute_average_score():
     precision = [[], [], []]
     recall = [[], [], []]
 
+    cut = 2
+
     for i in range(K):
         test = kfold_data[i]
         train = []
         for j in range(K):
             if j != i:
                 train += kfold_data[j]
-
-        root = ID3(copy.deepcopy(feature_div), train)
+        root = ID3(copy.deepcopy(feature_div), train, cut)
         tp = 0
         for j in test:
-            if j[4] == ID3_baseline.classify(root, j[:4]):
+            if j[4] == ID3_multib.classify(root, j[:4]):
                 tp += 1
         total_accuracy.append(float(tp) / len(test))
 
         for k in range(3):
-            p, r = ID3_baseline.evaluate(ID3_baseline.labels[k], test, root)
+            p, r = ID3_multib.evaluate(ID3_baseline.labels[k], test, root)
             precision[k].append(p)
             recall[k].append(r)
 
